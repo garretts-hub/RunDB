@@ -2,7 +2,7 @@
 Welcome to RunDB! This project utilizes a Jupyter notebook and a PostgreSQL database to practice data engineering and data science concepts, using your Strava running data to do so.<br>
 
 The `RunDB.ipynb` notebook will allow you to run SQL queries against your database, retrieve your Strava running data via the Strava API, and generate Pandas dataframes to visualize and analyze your mileage! For example, here's an example of a Pandas dataframe of some running data, plus a pretty Seaborn heatmap of that data! This lets you draw conclusions about your performance over the weeks while learning ETL along the way:<br>
-
+<img src="/images/sample_dataframe_output.png" alt="Sample output of a Dataframe with Weekly Running data" title="RunDB DataFrame">
 
 Note that for this notebook to work, you'll need:
  - An active Strava account

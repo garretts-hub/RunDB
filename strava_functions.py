@@ -96,6 +96,7 @@ def get_past_runs(path_to_api_keys, start_datetime_string, end_datetime_string, 
     list_of_runs = []
     #populate list_of_runs with all activities containing "run" or "treadmill" (case-insensitive) somewhere in the type.
     for event in list_of_activities:
+	event = json.dumps(event)
         if "run" in event["type"].lower() or "treadmill" in event["type"].lower():
             list_of_runs.append(event)
     ''' This block displays the actual GET URL, but it's obnoxious, so I've commented it out.

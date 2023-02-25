@@ -43,7 +43,8 @@ def check_if_expired(path_to_api_keys, verbose=True):
     '''
     Input: File path to strava api access data.
     Calls the refresh_access_key function if Access token is expired, and refreshes if needed.
-    Output: None (writes to existing api key file provided as input) 
+    Output: Boolean (True means the keys were expired & updated; False means original keys were good to go.
+            (also writes to existing api key file provided as input) 
     '''
     api_keys = obtain_api_access_info(path_to_api_keys)
     if datetime.datetime.fromtimestamp(api_keys["strava"]["expires_at"]) < datetime.datetime.now():
@@ -59,11 +60,12 @@ def check_if_expired(path_to_api_keys, verbose=True):
         if verbose:
             print("New Expiration time: {}".format(datetime.datetime.fromtimestamp(new_values["strava"]["expires_at"])))
             print("Tokens within {} have been updated. Continuing.".format(path_to_api_keys))
+        return True
     else:
         if verbose:
             print("---- Checking if API Tokens are valid. ----")
             print("Everything is good. No changes will be made")
-    return None
+        return False
 
 def get_past_runs(path_to_api_keys, start_datetime_string, end_datetime_string, verbose=True):    
     '''
@@ -81,7 +83,9 @@ def get_past_runs(path_to_api_keys, start_datetime_string, end_datetime_string, 
     if verbose:
         print("Obtaining Strava run data from {} to {}".format(start_datetime_string, end_datetime_string))
     #construct the HTTPS target
-    check_if_expired(path_to_api_keys, verbose=verbose)
+    isKeyExpired = check_if_expired(path_to_api_keys, verbose=verbose)
+    if isKeyExpired:
+        strava_api_access = obtain_api_access_info(path_to_api_keys)["strava"]
     base_url="https://www.strava.com/api/v3/athlete/activities"
     full_url=base_url+"/?access_token="+strava_api_access['access_token']
     #construct the GET request with parameters of access_token, after, and before
@@ -96,7 +100,7 @@ def get_past_runs(path_to_api_keys, start_datetime_string, end_datetime_string, 
     list_of_runs = []
     #populate list_of_runs with all activities containing "run" or "treadmill" (case-insensitive) somewhere in the type.
     for event in list_of_activities:
-	event = json.dumps(event)
+        event = dict(event)
         if "run" in event["type"].lower() or "treadmill" in event["type"].lower():
             list_of_runs.append(event)
     ''' This block displays the actual GET URL, but it's obnoxious, so I've commented it out.

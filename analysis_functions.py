@@ -48,7 +48,8 @@ def generate_weekly_summary(db_connection_obj, table_name, start_date_str, end_d
             row_dict[day_dict[i]] = daily_mileage
             weekly_total += daily_mileage
         row_dict["Total"] = weekly_total
-        df = df.append(row_dict, ignore_index=True)
+        row_df = pd.DataFrame.from_records([row_dict])
+        df = pd.concat([df, row_df])
     df = df.set_index("Week of:")
     if display_heatmap:
         lowest_mileage = df['Total'].min()
